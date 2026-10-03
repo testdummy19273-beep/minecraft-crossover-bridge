@@ -1,0 +1,7 @@
+er-bridge/build/
+mc-bridge/build/
+mc-bridge/.gradle/
+mc-bridge/run/
+*.zip
+*.class
+*.log
