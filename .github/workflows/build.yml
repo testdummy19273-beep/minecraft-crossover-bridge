@@ -1,7 +1,9 @@
-name: build
+﻿name: build
 
 on:
   push:
+    branches: ['**']
+    tags: ['v*']
   pull_request:
   workflow_dispatch:
 
@@ -50,3 +52,28 @@ jobs:
         with:
           name: er-bridge-mod
           path: mc-bridge/build/libs/*.jar
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [er-bridge, mc-bridge]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - run: ls -R dist
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          prerelease: true
+          generate_release_notes: true
+          body: |
+            **Untested Windows + Prism Launcher port** of the Elden Ring half. It compiles, but nothing has been run against a real game yet.
+
+            - `dinput8.dll` + `erbridge_core.dll`: put them where `scripts\install-er-bridge.ps1` expects (or just run the script from the repo).
+            - `er-bridge-*.jar`: Fabric mod for Minecraft 1.21.1 (needs Fabric Loader and Fabric API).
+
+            Offline only. Never go online with the bridge installed.
